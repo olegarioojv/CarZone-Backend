@@ -20,6 +20,11 @@ export class Car {
   @Column()
   brand!: string;
 
+  @Column({
+    nullable: true,
+  })
+  category!: string;
+
   @Column()
   model!: string;
 

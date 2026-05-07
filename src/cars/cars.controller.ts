@@ -64,6 +64,11 @@ export class CarsController {
   }
 
   // 🔍 Buscar por ID
+  @Get('categories')
+  getCategories() {
+    return this.service.getCategories();
+  }
+
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.service.findOne(id);

@@ -160,4 +160,21 @@ export class CarsService {
       where: { user: { id: userId } },
     });
   }
+
+  async getCategories() {
+    const cars = await this.repo.find();
+
+    const categoriesMap = cars.reduce((acc: Record<string, number>, car) => {
+      if (!car.category) return acc;
+
+      acc[car.category] = (acc[car.category] || 0) + 1;
+
+      return acc;
+    }, {});
+
+    return Object.entries(categoriesMap).map(([name, total]) => ({
+      name,
+      total,
+    }));
+  }
 }

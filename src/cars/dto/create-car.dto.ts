@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 import { IsString, IsNumber } from 'class-validator';
 
 export class CreateCarDto {
@@ -13,6 +14,12 @@ export class CreateCarDto {
   })
   @IsString()
   brand!: string;
+
+  @ApiProperty({
+    example: 'SUV',
+  })
+  @IsString()
+  category!: string;
 
   @ApiProperty({
     example: '320i',
