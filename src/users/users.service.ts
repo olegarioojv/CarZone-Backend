@@ -1,6 +1,12 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
+
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
@@ -13,9 +19,11 @@ export class UsersService {
     private readonly repo: Repository<User>,
   ) {}
 
-  async create(data: CreateUserDto) {
+  async create(data: CreateUserDto): Promise<User> {
     const userExists = await this.repo.findOne({
-      where: { email: data.email },
+      where: {
+        email: data.email,
+      },
     });
 
     if (userExists) {
@@ -32,11 +40,25 @@ export class UsersService {
     return this.repo.save(user);
   }
 
-  findAll() {
+  async findAll(): Promise<User[]> {
     return this.repo.find();
   }
 
-  findByEmail(email: string) {
-    return this.repo.findOne({ where: { email } });
+  async findOne(id: string): Promise<User> {
+    const user = await this.repo.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.repo.findOne({
+      where: { email },
+    });
   }
 }

@@ -1,0 +1,40 @@
+services:
+  api:
+    build: .
+    container_name: carzone_api
+
+    ports:
+      - '3000:3000'
+
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+    env_file:
+      - .env
+
+    depends_on:
+      - postgres
+
+    command: npm run start:dev
+
+  postgres:
+    image: postgres:16
+
+    container_name: carzone_postgres
+
+    restart: always
+
+    ports:
+      - '5432:5432'
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: carzone
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

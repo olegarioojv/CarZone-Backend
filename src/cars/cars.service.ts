@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Car } from './entities/car.entity';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
+import { FilterCarDto } from './dto/filter-car.dto';
 
 @Injectable()
 export class CarsService {
@@ -28,10 +29,77 @@ export class CarsService {
   }
 
   // 📄 Listar todos (com dono)
-  findAll() {
-    return this.repo.find({
-      relations: ['user', 'images'],
-    });
+  async findAll(filters: FilterCarDto) {
+    const {
+      brand,
+      model,
+      minYear,
+      maxYear,
+      minPrice,
+      maxPrice,
+      page = '1',
+      limit = '10',
+    } = filters;
+
+    const query = this.repo
+      .createQueryBuilder('car')
+      .leftJoinAndSelect('car.user', 'user')
+      .leftJoinAndSelect('car.images', 'images');
+
+    // 🔍 filtros
+    if (brand) {
+      query.andWhere('car.brand ILIKE :brand', {
+        brand: `%${brand}%`,
+      });
+    }
+
+    if (model) {
+      query.andWhere('car.model ILIKE :model', {
+        model: `%${model}%`,
+      });
+    }
+
+    if (minYear) {
+      query.andWhere('car.year >= :minYear', {
+        minYear: Number(minYear),
+      });
+    }
+
+    if (maxYear) {
+      query.andWhere('car.year <= :maxYear', {
+        maxYear: Number(maxYear),
+      });
+    }
+
+    if (minPrice) {
+      query.andWhere('car.price >= :minPrice', {
+        minPrice: Number(minPrice),
+      });
+    }
+
+    if (maxPrice) {
+      query.andWhere('car.price <= :maxPrice', {
+        maxPrice: Number(maxPrice),
+      });
+    }
+
+    // 📄 paginação
+    const take = Number(limit);
+    const skip = (Number(page) - 1) * take;
+
+    query.skip(skip).take(take);
+
+    // 🔥 ordenação
+    query.orderBy('car.createdAt', 'DESC');
+
+    const [cars, total] = await query.getManyAndCount();
+
+    return {
+      data: cars,
+      total,
+      page: Number(page),
+      lastPage: Math.ceil(total / take),
+    };
   }
 
   // 🔍 Buscar por ID

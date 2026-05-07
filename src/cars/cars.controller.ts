@@ -11,16 +11,19 @@ import {
   ParseUUIDPipe,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
 import { CarsService } from './cars.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { UploadService } from '../upload/upload.service';
 import { ImagesService } from '../images/images.service';
+import { FilterCarDto } from './dto/filter-car.dto';
 
 type RequestWithUser = Request & {
   user: {
@@ -29,6 +32,7 @@ type RequestWithUser = Request & {
   };
 };
 
+@ApiTags('Cars')
 @Controller('cars')
 export class CarsController {
   constructor(
@@ -38,6 +42,7 @@ export class CarsController {
   ) {}
 
   // 🔐 Criar carro
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post()
   create(@Body() body: CreateCarDto, @Req() req: RequestWithUser) {
@@ -46,11 +51,12 @@ export class CarsController {
 
   // 📄 Listar todos
   @Get()
-  findAll() {
-    return this.service.findAll();
+  findAll(@Query() query: FilterCarDto) {
+    return this.service.findAll(query);
   }
 
   // 🔐 Meus carros (vem antes de :id)
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
   getMyCars(@Req() req: RequestWithUser) {
@@ -64,6 +70,7 @@ export class CarsController {
   }
 
   // 🔐 Upload de imagem
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post(':id/upload')
   @UseInterceptors(FileInterceptor('file'))
@@ -76,6 +83,7 @@ export class CarsController {
   }
 
   // 🔐 Atualizar carro
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   update(
@@ -87,6 +95,7 @@ export class CarsController {
   }
 
   // 🔐 Deletar carro
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Delete('/image/:imageId')
   deleteImage(@Param('imageId') imageId: string, @Req() req: RequestWithUser) {

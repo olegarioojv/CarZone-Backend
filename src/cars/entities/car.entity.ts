@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  CreateDateColumn,
+} from 'typeorm';
 import { OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Image } from '../../images/entities/image.entity';
@@ -34,4 +40,7 @@ export class Car {
 
   @OneToMany(() => Image, (image) => image.car)
   images!: Image[];
+
+  @CreateDateColumn()
+  createdAt!: Date;
 }
