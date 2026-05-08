@@ -10,6 +10,10 @@ export class FilterCarDto {
   model?: string;
 
   @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
   @IsNumberString()
   minYear?: string;
 

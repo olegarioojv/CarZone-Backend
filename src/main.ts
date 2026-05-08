@@ -1,14 +1,20 @@
 import { NestFactory, Reflector } from '@nestjs/core';
+
 import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
+
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // 🔥 LIBERA FRONTEND
+  app.enableCors();
+
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
-  // 🔥 Validação global
+  // 🔥 validação global
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -31,5 +37,4 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 
-// evita warning do ESLint
 void bootstrap();
