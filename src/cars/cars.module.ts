@@ -9,11 +9,7 @@ import { UploadModule } from '../upload/upload.module';
 import { ImagesModule } from '../images/images.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Car]),
-    UploadModule,
-    ImagesModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Car]), UploadModule, ImagesModule],
   providers: [CarsService],
   controllers: [CarsController],
 })

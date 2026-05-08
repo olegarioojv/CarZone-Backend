@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsNumberString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class FilterCarDto {
   @IsOptional()
@@ -14,26 +14,28 @@ export class FilterCarDto {
   category?: string;
 
   @IsOptional()
-  @IsNumberString()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  sort?: string;
+
+  @IsOptional()
   minYear?: string;
 
   @IsOptional()
-  @IsNumberString()
   maxYear?: string;
 
   @IsOptional()
-  @IsNumberString()
   minPrice?: string;
 
   @IsOptional()
-  @IsNumberString()
   maxPrice?: string;
 
   @IsOptional()
-  @IsNumberString()
   page?: string;
 
   @IsOptional()
-  @IsNumberString()
   limit?: string;
 }
